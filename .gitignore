@@ -1,0 +1,10 @@
+# Dependencies
+node_modules/
+
+# Environment variables & secrets (CRITICAL)
+.env
+
+# TypeScript / Build output
+dist/
+build/
+*.tsbuildinfo
