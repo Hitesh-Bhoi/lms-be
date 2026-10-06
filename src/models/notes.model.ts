@@ -1,5 +1,5 @@
 import mongoose, { model, Schema } from "mongoose";
-import { NoteInterfaceType } from "../types";
+import { NoteInterfaceType } from "../common/types";
 
 const noteSchema = new Schema<NoteInterfaceType>({
     lead_id: {
