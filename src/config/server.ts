@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import router from '../routes/index.js';
+
 export const connectServer = (): Promise<void> => {
     return new Promise((resolve, reject) => {
         const app: express.Application = express();
