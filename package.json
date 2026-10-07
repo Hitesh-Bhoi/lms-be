@@ -2,7 +2,7 @@
   "name": "leads_tracking",
   "version": "0.0.1",
   "description": "leads management system",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon --exec tsx src/index.ts",
     "build": "tsc",

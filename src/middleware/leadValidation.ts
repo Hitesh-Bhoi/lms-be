@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { isValidEmail, isValidPhone } from "../common";
+import { isValidEmail, isValidPhone, normalizePhone } from "../common";
 import { LEADS_STATUS_ENUM } from "../common/enums";
 
 export const validateLeadPayload = (isUpdate = false) => {
@@ -33,7 +33,7 @@ export const validateLeadPayload = (isUpdate = false) => {
             if (!isValidPhone(trimmedPhone)) {
                 return res.status(400).json({ message: "invalid phone number" });
             }
-            req.body.phone = trimmedPhone;
+            req.body.phone = normalizePhone(trimmedPhone);
         }
         if (status) {
             const validStatuses = Object.values(LEADS_STATUS_ENUM);

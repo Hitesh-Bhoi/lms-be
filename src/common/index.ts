@@ -8,8 +8,13 @@ export const isValidEmail = (email: string) => {
     return emailRegx.test(email)
 };
 
+// function to normalize phone
+export const normalizePhone = (phone: string) => {
+    return phone.replace(/[\s\-\(\)]/g, '');
+};
+
 // function to validate phone
 export const isValidPhone = (phone: string) => {
-    const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+    const cleanPhone = normalizePhone(phone);
     return phoneRegx.test(cleanPhone);
-}
+};

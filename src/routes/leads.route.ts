@@ -3,10 +3,10 @@ import { createLead, deleteLeadRecord, getAllLeadRecords, getLeadById, updateLea
 import { validateLeadPayload } from "../middleware/leadValidation";
 const route = Router();
 
-route.post("/", createLead, validateLeadPayload(false));
+route.post("/", validateLeadPayload(false), createLead);
 route.get("/", getAllLeadRecords);
 route.get("/:id", getLeadById);
-route.put("/:id", updateLeadRecord, validateLeadPayload(true));
+route.put("/:id", validateLeadPayload(true), updateLeadRecord);
 route.delete("/:id", deleteLeadRecord);
 
 export default route;

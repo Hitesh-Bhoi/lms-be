@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { LeadInterfaceType } from "../common/types";
-import { emailRegx, phoneRegx } from "../common";
+import { emailRegx, normalizePhone, phoneRegx } from "../common";
 import { LEADS_STATUS_ENUM } from "../common/enums";
 
 const leadSchema = new Schema<LeadInterfaceType>({
@@ -21,6 +21,7 @@ const leadSchema = new Schema<LeadInterfaceType>({
     phone: {
         type: String,
         required: [true, "Phone is required"],
+        set: (v: string) => (typeof v === "string" ? normalizePhone(v) : v),
         match: [
             phoneRegx,
             "please enter a valid phone number"
