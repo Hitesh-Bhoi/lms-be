@@ -101,3 +101,16 @@ export const updateLeadRecord = async (req: Request, res: Response) => {
         return res.status(500).json({ message: error instanceof Error ? error.message : error });
     }
 };
+
+// delete lead record
+export const deleteLeadRecord = async (req: Request, res: Response) => {
+    try {
+        const id: string | string[] = req.params.id;
+        if (!id) return res.status(400).json({ message: "Lead record id is required" });
+        const data = await Lead.findByIdAndDelete(req.params.id);
+        if (!data) return res.status(404).json({ message: "Lead record not found" });
+        return res.status(200).json({ message: "Lead record delete successfully" });
+    } catch (error: unknown) {
+        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+    }
+};
