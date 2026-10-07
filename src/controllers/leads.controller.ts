@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Lead } from "../models/leads.model";
-import { isValidEmail, isValidPhone } from "../common";
-import { LEADS_STATUS_ENUM } from "../common/enums";
 
 // add new lead record
 export const createLead = async (req: Request, res: Response) => {
