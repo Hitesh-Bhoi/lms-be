@@ -1,4 +1,4 @@
-# Dependencies
+# Node modules
 node_modules/
 
 # Environment variables & secrets (CRITICAL)
