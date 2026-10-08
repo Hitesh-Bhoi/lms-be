@@ -22,7 +22,19 @@ export const createLead = async (req: Request, res: Response) => {
 // get all lead records
 export const getAllLeadRecords = async (req: Request, res: Response) => {
     try {
-        const data = await Lead.find();
+        const { search, status } = req.query;
+        const filterObj: Record<string, any> = {};
+        if (status && typeof status === "string") {
+            filterObj.status = status.trim().toLowerCase();
+        }
+        const searchTerm = typeof search === "string" ? search.trim() : "";
+        if (searchTerm) {
+            filterObj.$or = [
+                { name: { $regex: searchTerm, $options: "i" } },
+                { email: { $regex: searchTerm, $options: "i" } }
+            ];
+        };
+        const data = await Lead.find(filterObj);
         return res.status(200).json({
             data,
             message: "All lead records fetched successfully"
