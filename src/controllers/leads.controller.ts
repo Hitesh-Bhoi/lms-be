@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Lead } from "../models/leads.model";
+import { LeadQueryFilter, formatPaginationResponse } from "../services/leads-filter";
 
 // add new lead record
 export const createLead = async (req: Request, res: Response) => {
@@ -22,26 +23,10 @@ export const createLead = async (req: Request, res: Response) => {
 // get all lead records
 export const getAllLeadRecords = async (req: Request, res: Response) => {
     try {
-        const { search, status, page, limit } = req.query;
-        const filterObj: Record<string, any> = {};
-        if (status && typeof status === "string" && status.trim().toLowerCase() !== "all") {
-            filterObj.status = status.trim().toLowerCase();
-        }
-        const searchTerm = typeof search === "string" ? search.trim() : "";
-        if (searchTerm) {
-            filterObj.$or = [
-                { name: { $regex: searchTerm, $options: "i" } },
-                { email: { $regex: searchTerm, $options: "i" } }
-            ];
-        };
-
-        const parsedPage = parseInt(page as string, 10);
-        const parsedLimit = parseInt(limit as string, 10);
-
-        const pageNumber = !isNaN(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-        const limitNumber = !isNaN(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 100) : 10;
-        const skip = (pageNumber - 1) * limitNumber;
-
+        // extract necessary flags from service helpers
+        const { filterObj, pagination } = LeadQueryFilter(req.query);
+        const { pageNumber, limitNumber, skip } = pagination;
+        // fetch leads record and total count of leads
         const [data, total] = await Promise.all([
             Lead.find(filterObj)
                 .sort({ created_at: -1 })
@@ -49,19 +34,9 @@ export const getAllLeadRecords = async (req: Request, res: Response) => {
                 .limit(limitNumber),
             Lead.countDocuments(filterObj)
         ]);
-
-        const totalPages = Math.ceil(total / limitNumber);
-
         return res.status(200).json({
             data,
-            pagination: {
-                total,
-                page: pageNumber,
-                limit: limitNumber,
-                totalPages,
-                hasNextPage: pageNumber < totalPages,
-                hasPrevPage: pageNumber > 1
-            },
+            pagination: formatPaginationResponse(total, pageNumber, limitNumber),
             message: "All lead records fetched successfully"
         });
     } catch (error: unknown) {
