@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Lead } from "../models/leads.model";
+import { LeadQueryFilter, formatPaginationResponse } from "../services/leads.filter";
 
 // add new lead record
 export const createLead = async (req: Request, res: Response) => {
@@ -22,9 +23,20 @@ export const createLead = async (req: Request, res: Response) => {
 // get all lead records
 export const getAllLeadRecords = async (req: Request, res: Response) => {
     try {
-        const data = await Lead.find();
+        // extract necessary flags from service helpers
+        const { filterObj, pagination } = LeadQueryFilter(req.query);
+        const { pageNumber, limitNumber, skip } = pagination;
+        // fetch leads record and total count of leads
+        const [data, total] = await Promise.all([
+            Lead.find(filterObj)
+                .sort({ created_at: -1 })
+                .skip(skip)
+                .limit(limitNumber),
+            Lead.countDocuments(filterObj)
+        ]);
         return res.status(200).json({
             data,
+            pagination: formatPaginationResponse(total, pageNumber, limitNumber),
             message: "All lead records fetched successfully"
         });
     } catch (error: unknown) {
