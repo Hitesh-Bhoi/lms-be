@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createLead, deleteLeadRecord, getAllLeadRecords, getLeadById, updateLeadRecord } from "../controllers/leads.controller";
-import { validateLeadPayload } from "../middleware/leadValidation";
+import { validateLeadPayload } from "../middleware/lead.validation";
 const route = Router();
 
 route.post("/", validateLeadPayload(false), createLead);

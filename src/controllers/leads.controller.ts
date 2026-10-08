@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Lead } from "../models/leads.model";
-import { LeadQueryFilter, formatPaginationResponse } from "../services/leads-filter";
+import { LeadQueryFilter, formatPaginationResponse } from "../services/leads.filter";
 
 // add new lead record
 export const createLead = async (req: Request, res: Response) => {
