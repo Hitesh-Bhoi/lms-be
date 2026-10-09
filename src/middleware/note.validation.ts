@@ -13,7 +13,7 @@ export const validateNotePayload = (req: Request, res: Response, next: NextFunct
         return res.status(400).json({ message: "Invalid lead ID format" });
     }
     // check if content is not provided
-    if (!content || content.trim().length === 0) {
+    if ( !content || content === "") {
         return res.status(400).json({ message: "Content is required" });
     }
     // check if content is not a string

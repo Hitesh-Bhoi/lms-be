@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import { Lead } from "../models/leads.model";
 import { Note } from "../models/notes.model";
 import { buildLeadQueryFilter, formatPaginationResponse } from "../services/leads.filter";
@@ -57,9 +58,27 @@ export const updateLead = asyncHandler(async (req: Request, res: Response): Prom
 // delete lead
 export const deleteLead = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
-    const data = await Lead.findByIdAndDelete(id);
-    if (!data) throw new ApiError(404, "Lead record not found");
-    // delete associated notes
-    await Note.deleteMany({ lead_id: id });
-    return res.status(200).json({ message: "Lead record deleted successfully" });
+    const session = await mongoose.startSession();
+    try {
+        await session.withTransaction(async () => {
+            const data = await Lead.findByIdAndDelete(id, { session });
+            if (!data) throw new ApiError(404, "Lead record not found");
+            // delete associated notes
+            await Note.deleteMany({ lead_id: id }, { session });
+        });
+        return res.status(200).json({ message: "Lead record deleted successfully" });
+    } catch (error: unknown) {
+        if (error instanceof ApiError) throw error;
+        // fallback if transactions are not supported by the deployed MongoDB topology
+        const isNotReplicaSet = error instanceof Error && /replica set|transaction numbers/i.test(error.message);
+        if (isNotReplicaSet) {
+            const data = await Lead.findByIdAndDelete(id);
+            if (!data) throw new ApiError(404, "Lead record not found");
+            await Note.deleteMany({ lead_id: id });
+            return res.status(200).json({ message: "Lead record deleted successfully" });
+        }
+        throw error;
+    } finally {
+        await session.endSession();
+    }
 });

@@ -42,6 +42,13 @@ export const errorHandler = (err: unknown, _req: Request, res: Response, _next: 
         return res.status(401).json({ message: "Invalid authentication token" });
     }
 
+    // handle http errors from express middleware (e.g. body-parser)
+    const status = (err as { status?: number; statusCode?: number })?.status
+        ?? (err as { statusCode?: number })?.statusCode;
+    if (typeof status === "number" && status >= 400 && status < 500) {
+        return res.status(status).json({ message: (err as Error).message });
+    }
+
     // log unexpected errors and return generic response
     console.error("unhandled error:", err);
     return res.status(500).json({ message: "Internal server error" });

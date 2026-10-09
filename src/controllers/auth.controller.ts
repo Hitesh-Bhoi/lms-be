@@ -18,7 +18,7 @@ export const adminLogin = asyncHandler(async (req: Request, res: Response): Prom
     // compare provided password with stored hashed password
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
-        throw new ApiError(401, "Invalid password");
+        throw new ApiError(401, "Invalid email or password");
     }
 
     const secret = process.env.JWT_SECRET;
