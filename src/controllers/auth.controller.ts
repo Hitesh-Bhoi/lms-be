@@ -5,7 +5,7 @@ import { User } from "../models/users.model";
 import { AuthTokenPayload } from "../common/types";
 
 // admin login
-export const adminLogin = async (req: Request, res: Response) => {
+export const adminLogin = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { email, password } = req.body;
 
@@ -35,13 +35,14 @@ export const adminLogin = async (req: Request, res: Response) => {
 
         const token = jwt.sign(payload, secret, { expiresIn });
 
-        const { exp } = jwt.decode(token) as { exp: number };
+        const decoded = jwt.decode(token) as { exp?: number } | null;
+        const maxAge = decoded?.exp ? decoded.exp * 1000 - Date.now() : 24 * 60 * 60 * 1000;
 
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
             sameSite: "lax",
-            maxAge: exp * 1000 - Date.now()
+            maxAge
         });
 
         return res.status(200).json({
@@ -62,7 +63,7 @@ export const adminLogin = async (req: Request, res: Response) => {
 };
 
 // get current authenticated admin profile
-export const getAdminProfile = async (req: Request, res: Response) => {
+export const getAdminProfile = async (req: Request, res: Response): Promise<Response> => {
     try {
         return res.status(200).json({
             data: req.user,
@@ -75,7 +76,7 @@ export const getAdminProfile = async (req: Request, res: Response) => {
 };
 
 // admin logout
-export const adminLogout = async (req: Request, res: Response) => {
+export const adminLogout = async (req: Request, res: Response): Promise<Response> => {
     try {
         res.clearCookie("token", {
             httpOnly: true,

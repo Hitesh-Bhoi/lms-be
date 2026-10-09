@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 
-export const validateNotePayload = (req: Request, res: Response, next: NextFunction) => {
+export const validateNotePayload = (req: Request, res: Response, next: NextFunction): void | Response => {
     // check if request body is missing
     if (!req.body || typeof req.body !== "object") {
         return res.status(400).json({ message: "Request body is required" });

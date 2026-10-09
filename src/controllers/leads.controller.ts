@@ -3,9 +3,10 @@ import mongoose from "mongoose";
 import { Lead } from "../models/leads.model";
 import { Note } from "../models/notes.model";
 import { LeadQueryFilter, formatPaginationResponse } from "../services/leads.filter";
+import { LeadFilterQueryParams } from "../common/types";
 
 // add new lead record
-export const createLead = async (req: Request, res: Response) => {
+export const createLead = async (req: Request, res: Response): Promise<Response> => {
     try {
         const data = await Lead.create(req.body);
         return res.status(201).json({ data, message: "Lead saved successfully" });
@@ -23,10 +24,10 @@ export const createLead = async (req: Request, res: Response) => {
 };
 
 // get all lead records
-export const getAllLeadRecords = async (req: Request, res: Response) => {
+export const getAllLeadRecords = async (req: Request, res: Response): Promise<Response> => {
     try {
         // extract filters and pagination helpers
-        const { filterObj, pagination } = LeadQueryFilter(req.query);
+        const { filterObj, pagination } = LeadQueryFilter(req.query as LeadFilterQueryParams);
         const { pageNumber, limitNumber, skip } = pagination;
         // fetch leads and count total documents
         const [data, total] = await Promise.all([
@@ -48,9 +49,10 @@ export const getAllLeadRecords = async (req: Request, res: Response) => {
 };
 
 // get lead record by id
-export const getLeadById = async (req: Request, res: Response) => {
+export const getLeadById = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const data = await Lead.findById(req.params.id);
+        const { id } = req.params;
+        const data = await Lead.findById(id);
         if (!data) return res.status(404).json({ message: "Lead record not found" });
         return res.status(200).json({
             data,
@@ -66,7 +68,7 @@ export const getLeadById = async (req: Request, res: Response) => {
 };
 
 // update lead record
-export const updateLeadRecord = async (req: Request, res: Response) => {
+export const updateLeadRecord = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { id } = req.params;
         const data = await Lead.findByIdAndUpdate(
@@ -90,7 +92,7 @@ export const updateLeadRecord = async (req: Request, res: Response) => {
 };
 
 // delete lead record
-export const deleteLeadRecord = async (req: Request, res: Response) => {
+export const deleteLeadRecord = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { id } = req.params;
         const data = await Lead.findByIdAndDelete(id);

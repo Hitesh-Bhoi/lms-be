@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AuthTokenPayload } from "../common/types";
 
-export const authenticateAdmin = (req: Request, res: Response, next: NextFunction) => {
+export const authenticateAdmin = (req: Request, res: Response, next: NextFunction): void | Response => {
     try {
         const authHeader = req.headers.authorization;
         const bearerToken = authHeader && authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;

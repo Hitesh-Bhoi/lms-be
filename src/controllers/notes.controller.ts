@@ -5,7 +5,7 @@ import { Note } from "../models/notes.model";
 import { formatPaginationResponse } from "../services/leads.filter";
 
 // add a note to a lead
-export const createNote = async (req: Request, res: Response) => {
+export const createNote = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { id } = req.params;
         const { content } = req.body;
@@ -37,7 +37,7 @@ export const createNote = async (req: Request, res: Response) => {
 };
 
 // get all notes for a specific lead
-export const getNotesByLeadId = async (req: Request, res: Response) => {
+export const getNotesByLeadId = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { id } = req.params;
         if (typeof id !== "string" || !mongoose.Types.ObjectId.isValid(id)) {
