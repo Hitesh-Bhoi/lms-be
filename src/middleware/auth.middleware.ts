@@ -1,36 +1,28 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AuthTokenPayload } from "../common/types";
+import { ApiError } from "./error.handler";
 
-export const authenticateAdmin = (req: Request, res: Response, next: NextFunction): void | Response => {
-    try {
-        const authHeader = req.headers.authorization;
-        const bearerToken = authHeader && authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;
-        const token = req.cookies?.token || bearerToken;
+export const authenticateAdmin = (req: Request, _res: Response, next: NextFunction): void => {
+    const authHeader = req.headers.authorization;
+    const bearerToken = authHeader && authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;
+    const token = req.cookies?.token || bearerToken;
 
-        if (!token) {
-            return res.status(401).json({ message: "Authentication token is required" });
-        }
-
-        const secret = process.env.JWT_SECRET;
-        if (!secret) {
-            return res.status(500).json({ message: "JWT_SECRET is not configured in server environment" });
-        }
-        const decoded = jwt.verify(token, secret) as AuthTokenPayload;
-
-        if (decoded.role !== "admin") {
-            return res.status(403).json({ message: "Access forbidden: admin privileges required" });
-        }
-
-        req.user = decoded;
-        next();
-    } catch (error: unknown) {
-        if (error instanceof jwt.TokenExpiredError) {
-            return res.status(401).json({ message: "Token has expired, please log in again" });
-        }
-        if (error instanceof jwt.JsonWebTokenError) {
-            return res.status(401).json({ message: "Invalid authentication token" });
-        }
-        return res.status(401).json({ message: "Authentication failed" });
+    if (!token) {
+        throw new ApiError(401, "Authentication token is required");
     }
+
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+        throw new ApiError(500, "JWT_SECRET is not configured in server environment");
+    }
+
+    const decoded = jwt.verify(token, secret) as AuthTokenPayload;
+
+    if (decoded.role !== "admin") {
+        throw new ApiError(403, "Access forbidden: admin privileges required");
+    }
+
+    req.user = decoded;
+    next();
 };

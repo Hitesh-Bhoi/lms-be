@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import router from '../routes/index';
 import cookieParser from 'cookie-parser';
+import { errorHandler } from '../middleware/error.handler';
 
 // initialize express server
 export const connectServer = (): Promise<void> => {
@@ -17,6 +18,8 @@ export const connectServer = (): Promise<void> => {
         app.use(express.json());
         // mount api router
         app.use("/api", router);
+        // mount centralized error handler
+        app.use(errorHandler);
         // start server and listen on port
         const server = app.listen(PORT,
             () => {
