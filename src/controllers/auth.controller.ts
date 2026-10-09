@@ -69,3 +69,17 @@ export const getAdminProfile = async (req: Request, res: Response) => {
         return res.status(500).json({ message: error instanceof Error ? error.message : error });
     }
 };
+
+// admin logout
+export const adminLogout = async (req: Request, res: Response) => {
+    try {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "lax"
+        });
+        return res.status(200).json({ message: "Logout successful" });
+    } catch (error: unknown) {
+        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+    }
+};
