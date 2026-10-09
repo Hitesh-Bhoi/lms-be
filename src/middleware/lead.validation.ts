@@ -2,8 +2,25 @@ import { Request, Response, NextFunction } from "express";
 import { isValidEmail, isValidPhone, normalizePhone } from "../common";
 import { LEADS_STATUS_ENUM } from "../common/enums";
 
-export const validateLeadPayload = (isUpdate = false) => {
-    return (req: Request, res: Response, next: NextFunction) => {
+export const validateLeadPayload = (isUpdate: boolean = false) => {
+    return (req: Request, res: Response, next: NextFunction): void | Response => {
+        // check if request body is missing
+        if (!req.body || typeof req.body !== "object") {
+            return res.status(400).json({ message: "Request body is required" });
+        }
+
+        // strip immutable fields on update
+        if (isUpdate) {
+            delete req.body._id;
+            delete req.body.created_at;
+            delete req.body.updated_at;
+        }
+
+        // check if no fields provided to update
+        if (isUpdate && Object.keys(req.body).length === 0) {
+            return res.status(400).json({ message: "No fields provided to update" });
+        }
+
         let { name, email, phone, status } = req.body;
         // check all primary fields are required
         if (!isUpdate && (!name || !email || !phone)) {
@@ -36,7 +53,7 @@ export const validateLeadPayload = (isUpdate = false) => {
             req.body.phone = normalizePhone(trimmedPhone);
         }
         if (status) {
-            const validStatuses = Object.values(LEADS_STATUS_ENUM);
+            const validStatuses: string[] = Object.values(LEADS_STATUS_ENUM);
             if (!validStatuses.includes(status)) {
                 return res.status(400).json({ message: "incorrect status type" });
             }

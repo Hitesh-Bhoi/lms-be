@@ -1,9 +1,9 @@
 import { model, Schema } from "mongoose";
-import { LeadInterfaceType } from "../common/types";
-import { emailRegx, normalizePhone, phoneRegx } from "../common";
+import { LeadDocument } from "../common/types";
+import { emailRegex, normalizePhone, phoneRegex } from "../common";
 import { LEADS_STATUS_ENUM } from "../common/enums";
 
-const leadSchema = new Schema<LeadInterfaceType>({
+const leadSchema = new Schema<LeadDocument>({
     name: {
         type: String,
         required: [true, "Name is required"],
@@ -14,7 +14,7 @@ const leadSchema = new Schema<LeadInterfaceType>({
         required: [true, "Email is required"],
         lowercase: true,
         match: [
-            emailRegx,
+            emailRegex,
             "Please enter a valid email address"
         ],
     },
@@ -23,7 +23,7 @@ const leadSchema = new Schema<LeadInterfaceType>({
         required: [true, "Phone is required"],
         set: (v: string) => (typeof v === "string" ? normalizePhone(v) : v),
         match: [
-            phoneRegx,
+            phoneRegex,
             "please enter a valid phone number"
         ],
         trim: true
@@ -35,7 +35,8 @@ const leadSchema = new Schema<LeadInterfaceType>({
     }
 }, {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
-    strict: "throw"// throw error if user pass extra fields that is not cover by the schema
+    strict: "throw" // throw error if unexpected fields are provided
 });
 
-export const Lead = model<LeadInterfaceType>("Lead", leadSchema);
+// export lead model
+export const Lead = model<LeadDocument>("Lead", leadSchema);

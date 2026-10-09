@@ -1,14 +1,14 @@
 import { model, Schema } from "mongoose";
-import { UserInterfaceType } from "../common/types";
-import { emailRegx } from "../common";
+import { UserDocument } from "../common/types";
+import { emailRegex } from "../common";
 
-const userSchema = new Schema<UserInterfaceType>({
+const userSchema = new Schema<UserDocument>({
     email: {
         type: String,
         required: [true, "Email is required"],
         unique: true,
         lowercase: true,
-        match: [emailRegx, "Please enter a valid email address"],
+        match: [emailRegex, "Please enter a valid email address"],
         trim: true
     },
     password: {
@@ -23,4 +23,4 @@ const userSchema = new Schema<UserInterfaceType>({
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
 });
 
-export const User = model<UserInterfaceType>("User", userSchema);
+export const User = model<UserDocument>("User", userSchema);

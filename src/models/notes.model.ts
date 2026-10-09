@@ -1,7 +1,7 @@
 import mongoose, { model, Schema } from "mongoose";
-import { NoteInterfaceType } from "../common/types";
+import { NoteDocument } from "../common/types";
 
-const noteSchema = new Schema<NoteInterfaceType>({
+const noteSchema = new Schema<NoteDocument>({
     lead_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Lead",
@@ -15,4 +15,4 @@ const noteSchema = new Schema<NoteInterfaceType>({
     }
 }, { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } });
 
-export const Note = model<NoteInterfaceType>("Note", noteSchema);
+export const Note = model<NoteDocument>("Note", noteSchema);
