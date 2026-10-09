@@ -8,7 +8,8 @@ export const connectServer = (): Promise<void> => {
         const app: express.Application = express();
         const PORT: number = Number(process.env.PORT) || 5000;
         //enable CORS for all routes with credentials
-        app.use(cors({ origin: true, credentials: true }));
+        const allowedOrigins = (process.env.CORS_ORIGINS || "").split(",").map(o => o.trim()).filter(Boolean);
+        app.use(cors({ origin: allowedOrigins, credentials: true }));
         //parse cookies
         app.use(cookieParser());
         //parse incoming JSON requests

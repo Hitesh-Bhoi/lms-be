@@ -35,11 +35,13 @@ export const adminLogin = async (req: Request, res: Response) => {
 
         const token = jwt.sign(payload, secret, { expiresIn });
 
+        const { exp } = jwt.decode(token) as { exp: number };
+
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
             sameSite: "lax",
-            maxAge: 24 * 60 * 60 * 1000 // 24 hours
+            maxAge: exp * 1000 - Date.now()
         });
 
         return res.status(200).json({
@@ -54,7 +56,8 @@ export const adminLogin = async (req: Request, res: Response) => {
             message: "Login successful"
         });
     } catch (error: unknown) {
-        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+        console.error("adminLogin failed:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
@@ -66,7 +69,8 @@ export const getAdminProfile = async (req: Request, res: Response) => {
             message: "Admin profile fetched successfully"
         });
     } catch (error: unknown) {
-        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+        console.error("getAdminProfile failed:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
@@ -80,6 +84,7 @@ export const adminLogout = async (req: Request, res: Response) => {
         });
         return res.status(200).json({ message: "Logout successful" });
     } catch (error: unknown) {
-        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+        console.error("adminLogout failed:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
