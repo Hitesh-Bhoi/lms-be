@@ -8,7 +8,7 @@ const router = Router();
 // auth route
 router.use("/auth", authRoutes);
 
-// protected routes of leads & notes
+// protected routes of leads and notes
 router.use("/leads", authenticateAdmin, leadRoutes);
 
 export default router;

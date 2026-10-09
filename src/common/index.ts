@@ -1,17 +1,17 @@
 // email validation regex
-export const emailRegx = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export const emailRegex: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 // phone validation regex
-export const phoneRegx = /^\+?[1-9]\d{9,14}$/;
+export const phoneRegex: RegExp = /^\+?[1-9]\d{9,14}$/;
 // function to validate email
-export const isValidEmail = (email: string) => {
-    return emailRegx.test(email)
+export const isValidEmail = (email: string): boolean => {
+    return emailRegex.test(email);
 };
 // function to normalize phone
-export const normalizePhone = (phone: string) => {
+export const normalizePhone = (phone: string): string => {
     return phone.replace(/[\s\-\(\)]/g, '');
 };
 // function to validate phone
-export const isValidPhone = (phone: string) => {
+export const isValidPhone = (phone: string): boolean => {
     const cleanPhone = normalizePhone(phone);
-    return phoneRegx.test(cleanPhone);
+    return phoneRegex.test(cleanPhone);
 };
