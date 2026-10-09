@@ -14,8 +14,8 @@ declare global {
         }
     }
 }
-// lead document interface type
-export interface LeadInterfaceType extends Document {
+// lead document interface
+export interface LeadDocument extends Document {
     name: string;
     email: string;
     phone: string;
@@ -24,16 +24,16 @@ export interface LeadInterfaceType extends Document {
     updated_at: Date;
 }
 
-// note document interface type
-export interface NoteInterfaceType extends Document {
-    lead_id: Types.ObjectId | LeadInterfaceType;
+// note document interface
+export interface NoteDocument extends Document {
+    lead_id: Types.ObjectId | LeadDocument;
     content: string;
     created_at: Date;
     updated_at: Date;
 }
 
-// user document interface type
-export interface UserInterfaceType extends Document {
+// user document interface
+export interface UserDocument extends Document {
     email: string;
     password: string;
     role: string;
@@ -42,7 +42,7 @@ export interface UserInterfaceType extends Document {
 }
 
 // pagination response interface
-export interface PaginationResponseType {
+export interface PaginationResponse {
     total: number;
     page: number;
     limit: number;

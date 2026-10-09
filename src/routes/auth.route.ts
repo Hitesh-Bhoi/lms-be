@@ -3,14 +3,14 @@ import { adminLogin, adminLogout, getAdminProfile } from "../controllers/auth.co
 import { validateLoginPayload } from "../middleware/auth.validation";
 import { authenticateAdmin } from "../middleware/auth.middleware";
 
-const route = Router();
+const router = Router();
 
 // admin login route
-route.post("/login", validateLoginPayload, adminLogin);
+router.post("/login", validateLoginPayload, adminLogin);
 // get authenticated admin profile route
-route.get("/me", authenticateAdmin, getAdminProfile);
+router.get("/me", authenticateAdmin, getAdminProfile);
 // admin logout route
-route.post("/logout", adminLogout);
+router.post("/logout", adminLogout);
 
 // export auth router
-export default route;
+export default router;

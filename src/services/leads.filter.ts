@@ -1,11 +1,11 @@
 import {
     LeadFilterQueryParams,
     LeadFilterResult,
-    PaginationResponseType
+    PaginationResponse
 } from "../common/types";
 
 // parse query filters and pagination
-export const LeadQueryFilter = (query: LeadFilterQueryParams): LeadFilterResult => {
+export const buildLeadQueryFilter = (query: LeadFilterQueryParams): LeadFilterResult => {
     const { search, status, page, limit } = query;
     const filterObj: Record<string, unknown> = {};
     // apply status filter
@@ -37,7 +37,7 @@ export const LeadQueryFilter = (query: LeadFilterQueryParams): LeadFilterResult 
 };
 
 // format pagination response
-export const formatPaginationResponse = (total: number, pageNumber: number, limitNumber: number): PaginationResponseType => {
+export const formatPaginationResponse = (total: number, pageNumber: number, limitNumber: number): PaginationResponse => {
     const totalPages = Math.ceil(total / limitNumber);
     return {
         total,

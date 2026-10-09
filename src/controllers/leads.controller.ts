@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Lead } from "../models/leads.model";
 import { Note } from "../models/notes.model";
-import { LeadQueryFilter, formatPaginationResponse } from "../services/leads.filter";
+import { buildLeadQueryFilter, formatPaginationResponse } from "../services/leads.filter";
 import { LeadFilterQueryParams } from "../common/types";
 
 // add new lead record
@@ -23,11 +23,11 @@ export const createLead = async (req: Request, res: Response): Promise<Response>
     }
 };
 
-// get all lead records
-export const getAllLeadRecords = async (req: Request, res: Response): Promise<Response> => {
+// get all leads
+export const getAllLeads = async (req: Request, res: Response): Promise<Response> => {
     try {
         // extract filters and pagination helpers
-        const { filterObj, pagination } = LeadQueryFilter(req.query as LeadFilterQueryParams);
+        const { filterObj, pagination } = buildLeadQueryFilter(req.query as LeadFilterQueryParams);
         const { pageNumber, limitNumber, skip } = pagination;
         // fetch leads and count total documents
         const [data, total] = await Promise.all([
@@ -43,7 +43,7 @@ export const getAllLeadRecords = async (req: Request, res: Response): Promise<Re
             message: "All lead records fetched successfully"
         });
     } catch (error: unknown) {
-        console.error("getAllLeadRecords failed:", error);
+        console.error("getAllLeads failed:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };
@@ -67,8 +67,8 @@ export const getLeadById = async (req: Request, res: Response): Promise<Response
     }
 };
 
-// update lead record
-export const updateLeadRecord = async (req: Request, res: Response): Promise<Response> => {
+// update lead
+export const updateLead = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { id } = req.params;
         const data = await Lead.findByIdAndUpdate(
@@ -86,13 +86,13 @@ export const updateLeadRecord = async (req: Request, res: Response): Promise<Res
         ) {
             return res.status(400).json({ message: error.message });
         }
-        console.error("updateLeadRecord failed:", error);
+        console.error("updateLead failed:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };
 
-// delete lead record
-export const deleteLeadRecord = async (req: Request, res: Response): Promise<Response> => {
+// delete lead
+export const deleteLead = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { id } = req.params;
         const data = await Lead.findByIdAndDelete(id);
@@ -104,7 +104,7 @@ export const deleteLeadRecord = async (req: Request, res: Response): Promise<Res
         if (error instanceof mongoose.Error.CastError) {
             return res.status(400).json({ message: error.message });
         }
-        console.error("deleteLeadRecord failed:", error);
+        console.error("deleteLead failed:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };
