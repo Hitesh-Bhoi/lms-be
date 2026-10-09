@@ -31,7 +31,8 @@ export const createNote = async (req: Request, res: Response) => {
         ) {
             return res.status(400).json({ message: error.message });
         }
-        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+        console.error("createNote failed:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
@@ -72,6 +73,7 @@ export const getNotesByLeadId = async (req: Request, res: Response) => {
         if (error instanceof mongoose.Error.CastError) {
             return res.status(400).json({ message: error.message });
         }
-        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+        console.error("getNotesByLeadId failed:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };

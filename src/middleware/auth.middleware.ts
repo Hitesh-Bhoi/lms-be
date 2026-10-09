@@ -4,7 +4,9 @@ import { AuthTokenPayload } from "../common/types";
 
 export const authenticateAdmin = (req: Request, res: Response, next: NextFunction) => {
     try {
-        const token = req.cookies.token;
+        const authHeader = req.headers.authorization;
+        const bearerToken = authHeader && authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;
+        const token = req.cookies?.token || bearerToken;
 
         if (!token) {
             return res.status(401).json({ message: "Authentication token is required" });

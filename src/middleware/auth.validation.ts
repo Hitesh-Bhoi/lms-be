@@ -2,6 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import { isValidEmail } from "../common";
 
 export const validateLoginPayload = (req: Request, res: Response, next: NextFunction) => {
+    // check if request body is missing
+    if (!req.body || typeof req.body !== "object") {
+        return res.status(400).json({ message: "Request body is required" });
+    }
+
     const { email, password } = req.body;
 
     // check if email and password are provided

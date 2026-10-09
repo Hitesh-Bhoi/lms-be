@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import router from '../routes/index.js';
+import router from '../routes/index';
 import cookieParser from 'cookie-parser';
 
 export const connectServer = (): Promise<void> => {

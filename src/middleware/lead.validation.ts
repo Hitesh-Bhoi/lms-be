@@ -4,6 +4,23 @@ import { LEADS_STATUS_ENUM } from "../common/enums";
 
 export const validateLeadPayload = (isUpdate = false) => {
     return (req: Request, res: Response, next: NextFunction) => {
+        // check if request body is missing
+        if (!req.body || typeof req.body !== "object") {
+            return res.status(400).json({ message: "Request body is required" });
+        }
+
+        // strip immutable fields on update
+        if (isUpdate) {
+            delete req.body._id;
+            delete req.body.created_at;
+            delete req.body.updated_at;
+        }
+
+        // check if no fields provided to update
+        if (isUpdate && Object.keys(req.body).length === 0) {
+            return res.status(400).json({ message: "No fields provided to update" });
+        }
+
         let { name, email, phone, status } = req.body;
         // check all primary fields are required
         if (!isUpdate && (!name || !email || !phone)) {

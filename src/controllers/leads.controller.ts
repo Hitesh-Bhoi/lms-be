@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Lead } from "../models/leads.model";
+import { Note } from "../models/notes.model";
 import { LeadQueryFilter, formatPaginationResponse } from "../services/leads.filter";
 
 // add new lead record
@@ -16,7 +17,8 @@ export const createLead = async (req: Request, res: Response) => {
         ) {
             return res.status(400).json({ message: error.message });
         }
-        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+        console.error("createLead failed:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
@@ -40,7 +42,8 @@ export const getAllLeadRecords = async (req: Request, res: Response) => {
             message: "All lead records fetched successfully"
         });
     } catch (error: unknown) {
-        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+        console.error("getAllLeadRecords failed:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
@@ -57,17 +60,21 @@ export const getLeadById = async (req: Request, res: Response) => {
         if (error instanceof mongoose.Error.CastError) {
             return res.status(400).json({ message: error.message });
         }
-        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+        console.error("getLeadById failed:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
 // update lead record
 export const updateLeadRecord = async (req: Request, res: Response) => {
     try {
-        const data = await Lead.findByIdAndUpdate(req.params.id,
-            { $set: req.body },// return updated document
-            { new: true, runValidators: true });// make sure mongoose schema rules are enforced
-        if (!data) return res.status(404).json({ message: "Lead not found" })
+        const { id } = req.params;
+        const data = await Lead.findByIdAndUpdate(
+            id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!data) return res.status(404).json({ message: "Lead not found" });
         return res.status(200).json({ data, message: "Lead updated successfully" });
     } catch (error: unknown) {
         if (
@@ -77,22 +84,25 @@ export const updateLeadRecord = async (req: Request, res: Response) => {
         ) {
             return res.status(400).json({ message: error.message });
         }
-        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+        console.error("updateLeadRecord failed:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
 // delete lead record
 export const deleteLeadRecord = async (req: Request, res: Response) => {
     try {
-        const id: string | string[] = req.params.id;
-        if (!id) return res.status(400).json({ message: "Lead record id is required" });
-        const data = await Lead.findByIdAndDelete(req.params.id);
+        const { id } = req.params;
+        const data = await Lead.findByIdAndDelete(id);
         if (!data) return res.status(404).json({ message: "Lead record not found" });
-        return res.status(200).json({ message: "Lead record delete successfully" });
+        // delete associated notes
+        await Note.deleteMany({ lead_id: id });
+        return res.status(200).json({ message: "Lead record deleted successfully" });
     } catch (error: unknown) {
         if (error instanceof mongoose.Error.CastError) {
             return res.status(400).json({ message: error.message });
         }
-        return res.status(500).json({ message: error instanceof Error ? error.message : error });
+        console.error("deleteLeadRecord failed:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };

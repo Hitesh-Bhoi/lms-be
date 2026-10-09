@@ -10,6 +10,7 @@ route.post("/", validateLeadPayload(false), createLead);
 route.get("/", getAllLeadRecords);
 route.get("/:id", getLeadById);
 route.put("/:id", validateLeadPayload(true), updateLeadRecord);
+route.patch("/:id", validateLeadPayload(true), updateLeadRecord);
 route.delete("/:id", deleteLeadRecord);
 
 // notes api routes

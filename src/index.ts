@@ -1,10 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config(); // load environment variables from .env file
 import { connectDB } from "./config/db";
 import { connectServer } from "./config/server";
-import dotenv from "dotenv";
 
 const startApp = async () => {
     try {
-        dotenv.config(); // load environment variables from .env file
         await connectDB(); // database connection
         await connectServer(); // server connection
     } catch (error: unknown) {
