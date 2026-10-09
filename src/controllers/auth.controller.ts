@@ -35,6 +35,13 @@ export const adminLogin = async (req: Request, res: Response) => {
 
         const token = jwt.sign(payload, secret, { expiresIn });
 
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "lax",
+            maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        });
+
         return res.status(200).json({
             data: {
                 token,

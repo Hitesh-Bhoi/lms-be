@@ -4,13 +4,8 @@ import { AuthTokenPayload } from "../common/types";
 
 export const authenticateAdmin = (req: Request, res: Response, next: NextFunction) => {
     try {
-        const authHeader = req.headers.authorization;
+        const token = req.cookies.token;
 
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({ message: "Authorization token is missing or malformed" });
-        }
-
-        const token = authHeader.split(" ")[1];
         if (!token) {
             return res.status(401).json({ message: "Authentication token is required" });
         }
