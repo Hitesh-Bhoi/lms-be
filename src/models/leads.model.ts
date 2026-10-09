@@ -35,7 +35,8 @@ const leadSchema = new Schema<LeadInterfaceType>({
     }
 }, {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
-    strict: "throw"// throw error if user pass extra fields that is not cover by the schema
+    strict: "throw" // throw error if unexpected fields are provided
 });
 
+// export lead model
 export const Lead = model<LeadInterfaceType>("Lead", leadSchema);

@@ -49,6 +49,7 @@ export const getNotesByLeadId = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "Lead not found" });
         }
 
+        // parse pagination query parameters
         const { page, limit } = req.query;
         const parsedPage = parseInt(page as string, 10);
         const parsedLimit = parseInt(limit as string, 10);
@@ -56,6 +57,7 @@ export const getNotesByLeadId = async (req: Request, res: Response) => {
         const limitNumber = parsedLimit > 0 ? Math.min(parsedLimit, 100) : 10;
         const skip = (pageNumber - 1) * limitNumber;
 
+        // fetch notes and count total documents
         const [data, total] = await Promise.all([
             Note.find({ lead_id: id })
                 .sort({ created_at: -1 })

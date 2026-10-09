@@ -25,10 +25,10 @@ export const createLead = async (req: Request, res: Response) => {
 // get all lead records
 export const getAllLeadRecords = async (req: Request, res: Response) => {
     try {
-        // extract necessary flags from service helpers
+        // extract filters and pagination helpers
         const { filterObj, pagination } = LeadQueryFilter(req.query);
         const { pageNumber, limitNumber, skip } = pagination;
-        // fetch leads record and total count of leads
+        // fetch leads and count total documents
         const [data, total] = await Promise.all([
             Lead.find(filterObj)
                 .sort({ created_at: -1 })
