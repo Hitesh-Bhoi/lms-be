@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Lead } from "../models/leads.model";
 import { Note } from "../models/notes.model";
+import { formatPaginationResponse } from "../services/leads.filter";
 
 // add a note to a lead
 export const createNote = async (req: Request, res: Response) => {
@@ -46,9 +47,25 @@ export const getNotesByLeadId = async (req: Request, res: Response) => {
         if (!lead) {
             return res.status(404).json({ message: "Lead not found" });
         }
-        const data = await Note.find({ lead_id: id }).sort({ created_at: -1 });
+
+        const { page, limit } = req.query;
+        const parsedPage = parseInt(page as string, 10);
+        const parsedLimit = parseInt(limit as string, 10);
+        const pageNumber = parsedPage > 0 ? parsedPage : 1;
+        const limitNumber = parsedLimit > 0 ? Math.min(parsedLimit, 100) : 10;
+        const skip = (pageNumber - 1) * limitNumber;
+
+        const [data, total] = await Promise.all([
+            Note.find({ lead_id: id })
+                .sort({ created_at: -1 })
+                .skip(skip)
+                .limit(limitNumber),
+            Note.countDocuments({ lead_id: id })
+        ]);
+
         return res.status(200).json({
             data,
+            pagination: formatPaginationResponse(total, pageNumber, limitNumber),
             message: "Notes fetched successfully"
         });
     } catch (error: unknown) {
