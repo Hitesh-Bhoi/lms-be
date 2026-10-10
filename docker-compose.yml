@@ -1,0 +1,20 @@
+services:
+  # Backend API service (built locally from backend Dockerfile)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    restart: always
+
+  # Next.js Frontend service (pulled directly from public GHCR)
+  frontend:
+    image: ghcr.io/hitesh-bhoi/lms-fe:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: always

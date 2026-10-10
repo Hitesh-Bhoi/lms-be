@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config({ override: true }); // load environment variables from .env file
+dotenv.config({ override: false }); // load environment variables from .env file
 import { connectDB } from "./config/db";
 import { connectServer } from "./config/server";
 
