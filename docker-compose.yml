@@ -1,32 +1,20 @@
 services:
+  # Backend API service (built locally from backend Dockerfile)
   backend:
     build:
-      context: ./lms-be
+      context: .
       dockerfile: Dockerfile
-    container_name: lms-backend
-    restart: unless-stopped
     ports:
       - "5000:5000"
     env_file:
-      - ./lms-be/.env
-    environment:
-      - PORT=5000
-      - NODE_ENV=production
+      - .env
+    restart: always
 
+  # Next.js Frontend service (pulled directly from public GHCR)
   frontend:
-    build:
-      context: ./lms-fe
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_BASE_URL: http://localhost:5000/api
-    container_name: lms-frontend
-    restart: unless-stopped
+    image: ghcr.io/hitesh-bhoi/lms-fe:latest
     ports:
       - "3000:3000"
-    environment:
-      - PORT=3000
-      - HOSTNAME=0.0.0.0
-      - NODE_ENV=production
-      - NEXT_PUBLIC_BASE_URL=http://localhost:5000/api
     depends_on:
       - backend
+    restart: always
