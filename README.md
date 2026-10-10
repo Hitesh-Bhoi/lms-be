@@ -76,30 +76,32 @@ Example configuration (`.env`):
 
 ```env
 PORT=5000
-MONGO_URI="mongodb://localhost:27017/lms"
+MONGO_URI="mongodb+srv://bhoihitesh183_db_user:<PASSWORD>@mongodb-cluster.3wrekmk.mongodb.net/lms"
 JWT_SECRET="supersecretjwtkey_lms_admin_2026"
 JWT_EXPIRES_IN="24h"
-CORS_ORIGINS="http://localhost:3000,http://localhost:5173"
+CORS_ORIGINS="https://lms-fe-rpgd.onrender.com"
 ```
 
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `PORT` | Server listening port | `5000` |
-| `MONGO_URI` | MongoDB connection URI | `mongodb://localhost:27017/lms` |
-| `JWT_SECRET` | Secret key for signing JWT tokens | — |
-| `JWT_EXPIRES_IN` | Token expiration period | `24h` |
-| `CORS_ORIGINS` | Comma-separated list of allowed frontend origins | `http://localhost:3000` |
+| Variable         | Description                                      | Default                            |
+| :--------------- | :----------------------------------------------- | :--------------------------------- |
+| `PORT`           | Server listening port                            | `5000`                             |
+| `MONGO_URI`      | MongoDB connection URI                           | `mongodb+srv://bhoihitesh183_db_user:<PASSWORD>@mongodb-cluster.3wrekmk.mongodb.net/lms`    |
+| `JWT_SECRET`     | Secret key for signing JWT tokens                | —                                  |
+| `JWT_EXPIRES_IN` | Token expiration period                          | `24h`                              |
+| `CORS_ORIGINS`   | Comma-separated list of allowed frontend origins | `https://lms-fe-rpgd.onrender.com` |
 
 ### 3. Run the Server
 
 #### Development Mode (with hot-reload):
+
 ```bash
 npm run dev
 ```
 
-The server starts by default at `http://localhost:5000`.
+The server starts by default at `https://lms-be-emi9.onrender.com/`.
 
 #### Production Build:
+
 ```bash
 # Compile TypeScript to JavaScript in /dist
 npm run build
@@ -112,15 +114,16 @@ npm start
 
 ## API Documentation & Examples (cURL)
 
-Base URL: `http://localhost:5000/api`
+Base URL: `https://lms-be-emi9.onrender.com/api`
 
 ### 1. Authentication Endpoints
 
 #### Admin Login
+
 Authenticates admin credentials, sets an HTTP-only cookie `token`, and returns the JWT in the response body.
 
 ```bash
-curl -X POST http://localhost:5000/api/auth/login \
+curl -X POST https://lms-be-emi9.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@gmail.com",
@@ -129,6 +132,7 @@ curl -X POST http://localhost:5000/api/auth/login \
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "data": {
@@ -144,14 +148,16 @@ curl -X POST http://localhost:5000/api/auth/login \
 ```
 
 #### Get Current Profile
+
 Fetches authenticated administrator details. Supports `Authorization: Bearer <TOKEN>` header or session cookie.
 
 ```bash
-curl -X GET http://localhost:5000/api/auth/me \
+curl -X GET https://lms-be-emi9.onrender.com/api/auth/me \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "data": {
@@ -164,10 +170,11 @@ curl -X GET http://localhost:5000/api/auth/me \
 ```
 
 #### Admin Logout
+
 Clears the authentication cookie.
 
 ```bash
-curl -X POST http://localhost:5000/api/auth/logout
+curl -X POST https://lms-be-emi9.onrender.com/api/auth/logout
 ```
 
 ---
@@ -177,10 +184,11 @@ curl -X POST http://localhost:5000/api/auth/logout
 > **Note:** All `/api/leads` routes require admin authentication (`Authorization: Bearer <TOKEN>` or auth cookie).
 
 #### Create a Lead
+
 Status options: `New` (default), `Contacted`, `Qualified`, `Lost`.
 
 ```bash
-curl -X POST http://localhost:5000/api/leads \
+curl -X POST https://lms-be-emi9.onrender.com/api/leads \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -192,6 +200,7 @@ curl -X POST http://localhost:5000/api/leads \
 ```
 
 **Response (201 Created):**
+
 ```json
 {
   "data": {
@@ -210,17 +219,19 @@ curl -X POST http://localhost:5000/api/leads \
 #### Get All Leads (with Search, Status Filter & Pagination)
 
 Query Parameters:
+
 - `search`: Filter by name, email, or phone.
 - `status`: Filter by lead status (`New`, `Contacted`, `Qualified`, `Lost`).
 - `page`: Page number (default: `1`).
 - `limit`: Records per page (default: `10`, max: `100`).
 
 ```bash
-curl -X GET "http://localhost:5000/api/leads?search=jane&status=New&page=1&limit=10" \
+curl -X GET "https://lms-be-emi9.onrender.com/api/leads?search=jane&status=New&page=1&limit=10" \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "data": [
@@ -245,16 +256,18 @@ curl -X GET "http://localhost:5000/api/leads?search=jane&status=New&page=1&limit
 ```
 
 #### Get Lead by ID
+
 ```bash
-curl -X GET http://localhost:5000/api/leads/6ac8d86b9be9895c366fee26 \
+curl -X GET https://lms-be-emi9.onrender.com/api/leads/6ac8d86b9be9895c366fee26 \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
 ```
 
 #### Update Lead
+
 Supports both `PUT` and `PATCH`.
 
 ```bash
-curl -X PUT http://localhost:5000/api/leads/6ac8d86b9be9895c366fee26 \
+curl -X PUT https://lms-be-emi9.onrender.com/api/leads/6ac8d86b9be9895c366fee26 \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -263,14 +276,16 @@ curl -X PUT http://localhost:5000/api/leads/6ac8d86b9be9895c366fee26 \
 ```
 
 #### Delete Lead
+
 Deletes the lead and all associated notes atomically.
 
 ```bash
-curl -X DELETE http://localhost:5000/api/leads/6ac8d86b9be9895c366fee26 \
+curl -X DELETE https://lms-be-emi9.onrender.com/api/leads/6ac8d86b9be9895c366fee26 \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "message": "Lead record deleted successfully"
@@ -282,8 +297,9 @@ curl -X DELETE http://localhost:5000/api/leads/6ac8d86b9be9895c366fee26 \
 ### 3. Notes Endpoints
 
 #### Add Note to a Lead
+
 ```bash
-curl -X POST http://localhost:5000/api/leads/6ac8d86b9be9895c366fee26/notes \
+curl -X POST https://lms-be-emi9.onrender.com/api/leads/6ac8d86b9be9895c366fee26/notes \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -292,6 +308,7 @@ curl -X POST http://localhost:5000/api/leads/6ac8d86b9be9895c366fee26/notes \
 ```
 
 **Response (201 Created):**
+
 ```json
 {
   "data": {
@@ -306,12 +323,14 @@ curl -X POST http://localhost:5000/api/leads/6ac8d86b9be9895c366fee26/notes \
 ```
 
 #### Get Notes for a Lead (Paginated)
+
 ```bash
-curl -X GET "http://localhost:5000/api/leads/6ac8d86b9be9895c366fee26/notes?page=1&limit=5" \
+curl -X GET "https://lms-be-emi9.onrender.com/api/leads/6ac8d86b9be9895c366fee26/notes?page=1&limit=5" \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "data": [
@@ -347,10 +366,10 @@ All errors are returned in a consistent JSON format:
 
 ### Common HTTP Status Codes
 
-| Code | Meaning | Common Causes |
-| :---: | :--- | :--- |
-| `400` | Bad Request | Validation failure, malformed JSON body, invalid MongoDB ObjectId format |
-| `401` | Unauthorized | Missing or expired token, invalid credentials |
-| `403` | Forbidden | Insufficient permissions (non-admin role) |
-| `404` | Not Found | Lead or user record not found |
-| `500` | Internal Server Error | Unexpected database or server exception |
+| Code  | Meaning               | Common Causes                                                            |
+| :---: | :-------------------- | :----------------------------------------------------------------------- |
+| `400` | Bad Request           | Validation failure, malformed JSON body, invalid MongoDB ObjectId format |
+| `401` | Unauthorized          | Missing or expired token, invalid credentials                            |
+| `403` | Forbidden             | Insufficient permissions (non-admin role)                                |
+| `404` | Not Found             | Lead or user record not found                                            |
+| `500` | Internal Server Error | Unexpected database or server exception                                  |
