@@ -41,7 +41,7 @@ export const adminLogin = asyncHandler(async (req: Request, res: Response): Prom
     res.cookie("token", token, {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "none",
         maxAge
     });
 
