@@ -10,7 +10,12 @@ export const connectServer = (): Promise<void> => {
         const app: express.Application = express();
         const PORT: number = Number(process.env.PORT) || 5000;
         // enable cors for allowed origins with credentials
-        const allowedOrigins = (process.env.CORS_ORIGINS || "").split(",").map(o => o.trim()).filter(Boolean);
+        
+        const allowedOrigins = [
+            process.env.CORS_ORIGIN_DEV || "http://localhost:3000",
+            process.env.CORS_ORIGIN_PROD || "https://lms-fe-rpgd.onrender.com",
+            "http://localhost:3000"
+        ].filter(Boolean) as string[];
         app.use(cors({ origin: allowedOrigins, credentials: true }));
         // parse cookies
         app.use(cookieParser());

@@ -1,20 +1,27 @@
+version: '3.8'
+
 services:
-  # Backend API service (built locally from backend Dockerfile)
+  # Backend API service
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - 5000:5000
     env_file:
       - .env
     restart: always
 
-  # Next.js Frontend service (pulled directly from public GHCR)
+  # Next.js Frontend service
   frontend:
-    image: ghcr.io/hitesh-bhoi/lms-fe:latest
+    build:
+      context: ../lms-fe          # Points to your local frontend folder
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:5000/api
+        NEXT_PUBLIC_BASE_URL: http://localhost:5000/api
     ports:
-      - "3000:3000"
+      - 3000:3000
     depends_on:
       - backend
     restart: always
