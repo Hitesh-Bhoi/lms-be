@@ -34,6 +34,14 @@ export const errorHandler = (err: unknown, _req: Request, res: Response, _next: 
         return res.status(err.statusCode).json({ message: err.message });
     }
 
+    // handle mongodb duplicate key errors
+    if (typeof err === "object" && err !== null && "code" in err && (err as { code: number }).code === 11000) {
+        const keyPattern = (err as { keyPattern?: Record<string, number> }).keyPattern;
+        const field = keyPattern ? Object.keys(keyPattern)[0] : "field";
+        const capitalizedField = field.charAt(0).toUpperCase() + field.slice(1);
+        return res.status(409).json({ message: `${capitalizedField} already exists` });
+    }
+
     // handle jwt authentication errors
     if (err instanceof jwt.TokenExpiredError) {
         return res.status(401).json({ message: "Token has expired, please login again" });
