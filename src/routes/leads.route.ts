@@ -10,7 +10,6 @@ const router = Router();
 router.post("/", validateLeadPayload(false), createLead);
 router.get("/", getAllLeads);
 router.get("/:id", getLeadById);
-router.put("/:id", validateLeadPayload(true), updateLead);
 router.patch("/:id", validateLeadPayload(true), updateLead);
 router.delete("/:id", deleteLead);
 

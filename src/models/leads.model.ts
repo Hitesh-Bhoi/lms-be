@@ -12,7 +12,9 @@ const leadSchema = new Schema<LeadDocument>({
     email: {
         type: String,
         required: [true, "Email is required"],
+        unique: true,
         lowercase: true,
+        trim: true,
         match: [
             emailRegex,
             "Please enter a valid email address"

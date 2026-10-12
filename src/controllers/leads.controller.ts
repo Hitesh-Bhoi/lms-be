@@ -8,6 +8,11 @@ import { asyncHandler, ApiError } from "../middleware/error.handler";
 
 // add new lead record
 export const createLead = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+    const { email } = req.body;
+    const existingLead = await Lead.findOne({ email });
+    if (existingLead) {
+        throw new ApiError(409, "Email already exists");
+    }
     const data = await Lead.create(req.body);
     return res.status(201).json({ data, message: "Lead saved successfully" });
 });
@@ -46,6 +51,9 @@ export const getLeadById = asyncHandler(async (req: Request, res: Response): Pro
 // update lead
 export const updateLead = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
+    if ("email" in req.body) {
+        throw new ApiError(400, "Email cannot be updated");
+    }
     const data = await Lead.findByIdAndUpdate(
         id,
         req.body,
